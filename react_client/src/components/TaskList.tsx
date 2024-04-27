@@ -66,6 +66,7 @@ function TaskList() {
       ),
       grow: 2,
       maxWidth: "700px",
+      hide: 1380,
       selector: (row: Task) => row.details
     },
     {
@@ -74,6 +75,7 @@ function TaskList() {
           <Badge color="secondary">PDF File</Badge>
         </h6>
       ),
+      hide: 1530,
       selector: (row: Task) => row.pdfFile || ""
     },
     {
@@ -97,7 +99,7 @@ function TaskList() {
     <Row className="mt-3">
       <Col md={2}></Col>
       <Col md={8}>
-        <DataTable striped responsive columns={columns} data={tasks} pagination progressPending={loading} progressComponent={<Spinner style={{ marginTop: "20px" }} />} conditionalRowStyles={conditionalRowStyles} />
+        <DataTable responsive columns={columns} data={tasks} pagination progressPending={loading} progressComponent={<Spinner style={{ marginTop: "20px" }} />} conditionalRowStyles={conditionalRowStyles} />
       </Col>
       <Col md={2}></Col>
     </Row>
