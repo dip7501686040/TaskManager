@@ -18,6 +18,7 @@ function TaskList() {
   const handleDeleteTask = async (id: string) => {
     await TaskService.deleteTask(id)
     getTasks()
+    toast.success("Task deleted successfully")
   }
   const handleEditTask = async (id: string) => {
     const task = await TaskService.getDetail(id)
