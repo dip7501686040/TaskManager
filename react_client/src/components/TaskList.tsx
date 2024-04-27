@@ -5,6 +5,7 @@ import { Badge, Card, CardBody, Col, ListGroup, ListGroupItem, Row, Spinner } fr
 import { Task, TaskService } from "../services/task.service"
 import { Context, ContextType } from "../App"
 import { toast } from "react-toastify"
+import Swal from "sweetalert2"
 
 function TaskList() {
   const { tasks, setTasks, taskDetails, setTaskDetails } = useContext<ContextType>(Context)
@@ -16,9 +17,21 @@ function TaskList() {
     setLoading(false)
   }
   const handleDeleteTask = async (id: string) => {
-    await TaskService.deleteTask(id)
-    getTasks()
-    toast.success("Task deleted successfully")
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await TaskService.deleteTask(id)
+        getTasks()
+        toast.success("Task deleted successfully")
+      }
+    })
   }
   const handleEditTask = async (id: string) => {
     const task = await TaskService.getDetail(id)
