@@ -28,7 +28,7 @@ function TaskList() {
     if (fileName) {
       await TaskService.handleDownload(id, fileName)
     } else {
-      toast.error("File name not found")
+      toast.error("File not found")
     }
   }
   useEffect(() => {
