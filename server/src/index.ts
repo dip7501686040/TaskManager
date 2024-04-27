@@ -7,7 +7,7 @@ import dotenv from "dotenv"
 
 // Create an Express app
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 8000
 const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://dip7501686040:ASDasd278@cluster0.alyonrh.mongodb.net/TaskManager?retryWrites=true&w=majority&appName=Cluster0"
 
 // middlewares

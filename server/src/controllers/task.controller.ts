@@ -15,7 +15,7 @@ interface TaskControllerType {
 
 const controller: TaskControllerType = {
   getTasks: async (req: Request, res: Response) => {
-    const tasks = await TaskModel.find({}, "name, details")
+    const tasks = await TaskModel.find({})
     res.status(200).json(tasks)
   },
   getTaskDetails: async (req: Request, res: Response) => {
@@ -24,13 +24,16 @@ const controller: TaskControllerType = {
   },
   saveTask: async (req: Request, res: Response) => {
     const task = req.body
-    task.pdfFile = req.file ? req.file.filename : ""
+    if (task.file) {
+      delete task.file
+    }
     if (task._id) {
       const id = task._id
       delete task._id
+      task.pdfFile = req.file ? req.file.filename : task.pdfFile
       const oldTask = await TaskModel.findOne({ _id: id }).select({ pdfFile: 1 })
       const updateResponse = await TaskModel.updateOne({ _id: id }, task)
-      if (oldTask?.pdfFile) {
+      if (oldTask?.pdfFile && oldTask?.pdfFile !== task.pdfFile) {
         try {
           await unlinkAsync(`${__dirname}/../uploads/${oldTask.pdfFile}`)
         } catch (e) {
@@ -39,6 +42,7 @@ const controller: TaskControllerType = {
       }
       res.status(200).json(updateResponse)
     } else {
+      task.pdfFile = req.file ? req.file.filename : ""
       const insertResponse = await TaskModel.create(task)
       res.status(201).json(insertResponse)
     }
