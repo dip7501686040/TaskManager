@@ -38,8 +38,7 @@ function TaskList() {
     {
       when: (row: Task) => row._id === taskDetails?._id,
       style: {
-        backgroundColor: "#0d6efd",
-        color: "white"
+        backgroundColor: "#e1e2e3"
       }
     },
     {
