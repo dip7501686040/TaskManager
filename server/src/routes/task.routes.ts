@@ -1,6 +1,6 @@
 import express from "express"
 import controller from "../controllers/task.controller"
-import upload from "../utils/multer"
+import upload from "../utils/multer.utils"
 const router = express.Router()
 router.get("/", controller.getTasks)
 router.get("/:id", controller.getTaskDetails)
