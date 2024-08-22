@@ -21,7 +21,7 @@ jobs:
     steps:
     # Checkout the code from the GitHub repository
     - name: Checkout code
-    - uses: actions/checkout@v4
+      uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
@@ -34,11 +34,9 @@ jobs:
       run: |
         npm ci
         npm run build
-
     # Install dependencies, export environment variables to be used by application and run tests for the server application
     - name: Install and build Server
       working-directory: ./server
       run: |
         npm ci
         npm run build
-
