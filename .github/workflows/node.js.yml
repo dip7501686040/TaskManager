@@ -40,6 +40,6 @@ jobs:
       run: |
         git config --global user.name "dip7501686040"
         git config --global user.email "dip7501686040@gmail.com"
-        git add ./server/dist ./react_client/build
+        git add -f ./server/dist ./react_client/build
         git commit -m "added build"
         git push origin HEAD:master --force
