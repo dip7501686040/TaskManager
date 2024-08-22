@@ -28,11 +28,23 @@ jobs:
     - name: Install and build Client
       working-directory: ./react_client
       run: |
-        npm ci
+        npm install
         npm run build
+        ls ./build
+        git config --global user.name "dip7501686040"
+        git config --global user.email "dip7501686040@gmail.com"
+        git add ./build
+        git commit -m "added client build"
+        git push
     # Install dependencies, export environment variables to be used by application and run tests for the server application
     - name: Install and build Server
       working-directory: ./server
       run: |
-        npm ci
+        npm install
         npm run build
+        ls ./dist
+        git config --global user.name "dip7501686040"
+        git config --global user.email "dip7501686040@gmail.com"
+        git add ./dist
+        git commit -m "added server build"
+        git push
