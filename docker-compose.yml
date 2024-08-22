@@ -1,0 +1,24 @@
+version: '3.8'
+
+# Services
+services:
+# Server service
+  server:
+    build: 
+      context: ./server
+      dockerfile: DockerFile
+    container_name: backend
+    ports:
+      - "8000:8000"
+
+  # Client service
+  client:
+    build:
+      context: ./react_client
+      dockerfile: DockerFile
+
+    container_name: frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - server

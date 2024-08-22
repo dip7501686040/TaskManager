@@ -65,15 +65,11 @@ const controller: TaskControllerType = {
       const sheetName = workbook.SheetNames[0]
       const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName])
       const insertResponse = await TaskModel.insertMany(sheetData)
-      try {
-        await unlinkAsync(req.file ? req.file.path : "")
-      } catch (e) {
-        console.log(e)
-      }
-      res.status(200).json(insertResponse)
+      await unlinkAsync(req.file ? req.file.path : "")
+      res.status(201).json(insertResponse)
     } catch (error) {
       console.error(error)
-      res.status(500).send("Error uploading file")
+      res.status(500).json({ error: "Error when uploading file" })
     }
   },
   downloadPDF: async (req: Request, res: Response) => {
