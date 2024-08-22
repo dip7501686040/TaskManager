@@ -13,6 +13,9 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
+    - name: Docker compose down
+      run: |
+        sudo docker compose down
     # Checkout the code from the GitHub repository
     - name: Checkout code
       uses: actions/checkout@v4
@@ -30,5 +33,4 @@ jobs:
         sparse-checkout-cone-mode: false
     - name: Docker compose up
       run: |
-        pwd
         sudo docker compose up -d
