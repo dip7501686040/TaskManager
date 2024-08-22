@@ -56,7 +56,7 @@ export const TaskService = {
   },
   deleteTask: async (id: string) => {
     let url = baseURL + "/tasks/" + id
-    const res = await fetch(url, { method: "DELETE" })
+    await fetch(url, { method: "DELETE" })
   },
   handleDownload: async (id: string, fileName: string) => {
     fetch(`${baseURL}/tasks/downloadpdf/${id}`, {
@@ -83,7 +83,7 @@ export const TaskService = {
   bulkAddByExcel: async (file: File) => {
     const formData = new FormData()
     formData.append("file", file)
-    const res = await fetch(baseURL + "/tasks/bulkAddByExcel", {
+    await fetch(baseURL + "/tasks/bulkAddByExcel", {
       method: "POST",
       body: formData
     })
