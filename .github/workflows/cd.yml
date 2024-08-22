@@ -20,8 +20,10 @@ jobs:
         sparse-checkout: |
           .github
           react_client/build
-          **/DockerFile
-          **/.dockerignore
+          react_client/DockerFile
+          react_client/.dockerignore
+          server/DockerFile
+          server/.dockerignore
           server/dist
           server/package.json
           server/uploads
