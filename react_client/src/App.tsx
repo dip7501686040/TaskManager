@@ -62,7 +62,7 @@ function App() {
       }}
     >
       <div className="App">
-        <h3 className="text-2xl font-bold underline text-red-600 text-center mt-1">Task Manager Deployed</h3>
+        <h3 className="text-2xl font-bold underline text-red-600 text-center mt-1">Task Manager</h3>
         <Row>
           <Col sm={2}></Col>
           <Col sm={8}>
