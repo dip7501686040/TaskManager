@@ -4,6 +4,7 @@
 name: Node.js CD
 
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["Node.js CI"]
     types:
