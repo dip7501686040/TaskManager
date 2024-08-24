@@ -38,8 +38,13 @@ jobs:
         npm run build
     - name: Commit Build
       run: |
-        git config --global user.name "dip7501686040"
-        git config --global user.email "dip7501686040@gmail.com"
-        git add -f ./server/dist ./react_client/build
-        git commit -m "added build"
-        git push origin HEAD:master --force
+        if [[ `git status --porcelain` ]]; then
+            git config --global user.name "dip7501686040"
+            git config --global user.email "dip7501686040@gmail.com"
+            git add -f ./server/dist ./react_client/build
+            git commit -m "added build"
+            git push origin HEAD:master --force
+          else
+            echo "WARNING: No changes were detected."
+          fi
+        shell: bash

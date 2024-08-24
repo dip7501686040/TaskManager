@@ -30,7 +30,7 @@ jobs:
           server/package.json
           server/src/uploads
           docker-compose.yml
-        sparse-checkout-cone-mode: false
+        sparse-checkout-cone-mode: true
     - name: Docker compose up
       run: |
         sudo docker compose up -d
