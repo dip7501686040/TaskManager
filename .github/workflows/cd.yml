@@ -17,6 +17,7 @@ jobs:
     - name: Docker compose down
       run: |
         sudo docker compose down
+        sudo docker rmi -f $(docker images -aq)
     # Checkout the code from the GitHub repository
     - name: Checkout code
       uses: actions/checkout@v4
