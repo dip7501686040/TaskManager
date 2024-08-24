@@ -5,10 +5,10 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "production" ]
     
   pull_request:
-    branches: [ "master" ]
+    branches: [ "production" ]
     
 jobs:
   build:
@@ -17,6 +17,8 @@ jobs:
     # Checkout the code from the GitHub repository
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        ref: production
     - name: Use Node.js 20
       uses: actions/setup-node@v4
       with:
@@ -43,7 +45,7 @@ jobs:
             git config --global user.email "dip7501686040@gmail.com"
             git add -f ./server/dist ./react_client/build
             git commit -m "added build"
-            git push origin HEAD:master --force
+            git push origin HEAD:production --force
           else
             echo "WARNING: No changes were detected."
           fi
