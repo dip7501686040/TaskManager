@@ -24,14 +24,14 @@ jobs:
         ref: production
         sparse-checkout: |
           react_client/build
-          react_client/DockerFile
-          react_client/.dockerignore
-          server/DockerFile
-          server/.dockerignore
+          react_client/DockerFile --skip-checks
+          react_client/.dockerignore --skip-checks
+          server/DockerFile --skip-checks
+          server/.dockerignore --skip-checks
           server/dist
-          server/package.json
+          server/package.json --skip-checks
           server/src/uploads
-          docker-compose.yml
+          docker-compose.yml --skip-checks
     - name: Docker compose up
       run: |
         sudo docker compose up -d
