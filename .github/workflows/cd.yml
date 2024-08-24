@@ -20,6 +20,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
+        fetch-depth: 0
         ref: production
         sparse-checkout: |
           react_client/build
@@ -31,7 +32,6 @@ jobs:
           server/package.json
           server/src/uploads
           docker-compose.yml
-        sparse-checkout-cone-mode: true
     - name: Docker compose up
       run: |
         sudo docker compose up -d
