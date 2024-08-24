@@ -1,4 +1,4 @@
-const baseURL = "http://localhost:8000/api"
+const baseURL = process.env.REACT_APP_API_BASE_URL
 
 export interface TaskType {
   name: string
