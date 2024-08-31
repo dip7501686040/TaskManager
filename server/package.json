@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node-dev --inspect -- src/index.ts",
-    "build": "tsc",
-    "serve": "node dist/index.js"
+    "start": "env-cmd --environments development ts-node-dev --inspect -- src/index.ts",
+    "build": "env-cmd --environments production tsc",
+    "serve": "env-cmd --environments production node dist/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -21,9 +21,11 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.637.0",
+    "@aws-sdk/s3-request-presigner": "^3.637.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "env-cmd": "^10.1.0",
     "express": "^4.19.2",
     "fs": "^0.0.1-security",
     "mongoose": "^8.3.2",

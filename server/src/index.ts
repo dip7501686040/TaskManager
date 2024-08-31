@@ -3,17 +3,15 @@ import mongoose from "mongoose"
 import bodyParser from "body-parser"
 import cors from "cors"
 import testRoutes from "./routes/task.routes"
-import dotenv from "dotenv"
 
 // Create an Express app
 const app = express()
 const port = process.env.PORT || 8000
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://dip7501686040:ASDasd278@cluster0.alyonrh.mongodb.net/TaskManager?retryWrites=true&w=majority&appName=Cluster0"
+const MONGO_URI = process.env.MONGO_URI || ""
 
 // middlewares
-dotenv.config()
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+// app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cors())
 
 // Connect to MongoDB
