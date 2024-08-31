@@ -3,6 +3,9 @@ import TaskModel from "../models/task.schema"
 import xlsx from "xlsx"
 import fs from "fs"
 import { promisify } from "util"
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
+
 const unlinkAsync = promisify(fs.unlink)
 interface TaskControllerType {
   getTasks: (req: Request, res: Response) => Promise<void>
@@ -10,7 +13,7 @@ interface TaskControllerType {
   saveTask: (req: Request, res: Response) => Promise<void>
   deleteTask: (req: Request, res: Response) => Promise<void>
   bulkAddByExcel: (req: Request, res: Response) => Promise<void>
-  downloadPDF: (req: Request, res: Response) => Promise<void>
+  getSignedS3URL: (req: Request, res: Response) => Promise<any>
 }
 
 const controller: TaskControllerType = {
@@ -30,32 +33,28 @@ const controller: TaskControllerType = {
     if (task._id) {
       const id = task._id
       delete task._id
-      task.pdfFile = req.file ? req.file.filename : task.pdfFile
-      const oldTask = await TaskModel.findOne({ _id: id }).select({ pdfFile: 1 })
       const updateResponse = await TaskModel.updateOne({ _id: id }, task)
-      if (oldTask?.pdfFile && oldTask?.pdfFile !== task.pdfFile) {
-        try {
-          await unlinkAsync(`${__dirname}/../uploads/${oldTask.pdfFile}`)
-        } catch (e) {
-          console.log(e)
-        }
-      }
       res.status(200).json(updateResponse)
     } else {
-      task.pdfFile = req.file ? req.file.filename : ""
       const insertResponse = await TaskModel.create(task)
       res.status(201).json(insertResponse)
     }
   },
   deleteTask: async (req: Request, res: Response) => {
-    const task = await TaskModel.findOne({ _id: req.params.id }).select({ pdfFile: 1 })
+    const task = await TaskModel.findById(req.params.id)
     const deleteResponse = await TaskModel.deleteOne({ _id: req.params.id })
     if (task?.pdfFile) {
-      try {
-        await unlinkAsync(`${__dirname}/../uploads/${task.pdfFile}`)
-      } catch (e) {
-        console.log(e)
+      const clientParams = {
+        region: process.env.AWS_REGION || "",
+        credentials: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ""
+        }
       }
+      const client = new S3Client(clientParams)
+      const getObjectParams = { Bucket: process.env.AWS_BUCKET_NAME || "", Key: task.pdfFile }
+      const command = new DeleteObjectCommand(getObjectParams)
+      await client.send(command)
     }
     res.status(200).json(deleteResponse)
   },
@@ -72,10 +71,33 @@ const controller: TaskControllerType = {
       res.status(500).json({ error: "Error when uploading file" })
     }
   },
-  downloadPDF: async (req: Request, res: Response) => {
-    const task = await TaskModel.findOne({ _id: req.params.id }).select({ pdfFile: 1 })
-    const filePath = `${__dirname}/../uploads/${task?.pdfFile}`
-    res.status(200).download(filePath)
+  getSignedS3URL: async (req: Request, res: Response) => {
+    try {
+      if (!req.params.filename) {
+        return res.status(400).json({ error: "Filename is required" })
+      } else if (!req.params.method) {
+        return res.status(400).json({ error: "Method is required" })
+      }
+      const clientParams = {
+        region: process.env.AWS_REGION || "",
+        credentials: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ""
+        }
+      }
+      const getObjectParams = { Bucket: process.env.AWS_BUCKET_NAME || "", Key: req.params.filename }
+      const client = new S3Client(clientParams)
+      let command = null
+      if (req.params.method === "put") {
+        command = new PutObjectCommand(getObjectParams)
+      } else {
+        command = new GetObjectCommand(getObjectParams)
+      }
+      const url = await getSignedUrl(client, command, { expiresIn: 3600 })
+      res.status(200).json({ url })
+    } catch (error) {
+      res.status(500).json({ error: "Error when when getting signed URL" })
+    }
   }
 }
 
