@@ -16,6 +16,8 @@ const task_schema_1 = __importDefault(require("../models/task.schema"));
 const xlsx_1 = __importDefault(require("xlsx"));
 const fs_1 = __importDefault(require("fs"));
 const util_1 = require("util");
+const client_s3_1 = require("@aws-sdk/client-s3");
+const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 const unlinkAsync = (0, util_1.promisify)(fs_1.default.unlink);
 const controller = {
     getTasks: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,35 +36,29 @@ const controller = {
         if (task._id) {
             const id = task._id;
             delete task._id;
-            task.pdfFile = req.file ? req.file.filename : task.pdfFile;
-            const oldTask = yield task_schema_1.default.findOne({ _id: id }).select({ pdfFile: 1 });
             const updateResponse = yield task_schema_1.default.updateOne({ _id: id }, task);
-            if ((oldTask === null || oldTask === void 0 ? void 0 : oldTask.pdfFile) && (oldTask === null || oldTask === void 0 ? void 0 : oldTask.pdfFile) !== task.pdfFile) {
-                try {
-                    yield unlinkAsync(`${__dirname}/../uploads/${oldTask.pdfFile}`);
-                }
-                catch (e) {
-                    console.log(e);
-                }
-            }
             res.status(200).json(updateResponse);
         }
         else {
-            task.pdfFile = req.file ? req.file.filename : "";
             const insertResponse = yield task_schema_1.default.create(task);
             res.status(201).json(insertResponse);
         }
     }),
     deleteTask: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const task = yield task_schema_1.default.findOne({ _id: req.params.id }).select({ pdfFile: 1 });
+        const task = yield task_schema_1.default.findById(req.params.id);
         const deleteResponse = yield task_schema_1.default.deleteOne({ _id: req.params.id });
         if (task === null || task === void 0 ? void 0 : task.pdfFile) {
-            try {
-                yield unlinkAsync(`${__dirname}/../uploads/${task.pdfFile}`);
-            }
-            catch (e) {
-                console.log(e);
-            }
+            const clientParams = {
+                region: process.env.AWS_REGION || "",
+                credentials: {
+                    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+                    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ""
+                }
+            };
+            const client = new client_s3_1.S3Client(clientParams);
+            const getObjectParams = { Bucket: process.env.AWS_BUCKET_NAME || "", Key: task.pdfFile };
+            const command = new client_s3_1.DeleteObjectCommand(getObjectParams);
+            yield client.send(command);
         }
         res.status(200).json(deleteResponse);
     }),
@@ -80,10 +76,36 @@ const controller = {
             res.status(500).json({ error: "Error when uploading file" });
         }
     }),
-    downloadPDF: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const task = yield task_schema_1.default.findOne({ _id: req.params.id }).select({ pdfFile: 1 });
-        const filePath = `${__dirname}/../uploads/${task === null || task === void 0 ? void 0 : task.pdfFile}`;
-        res.status(200).download(filePath);
+    getSignedS3URL: (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            if (!req.params.filename) {
+                return res.status(400).json({ error: "Filename is required" });
+            }
+            else if (!req.params.method) {
+                return res.status(400).json({ error: "Method is required" });
+            }
+            const clientParams = {
+                region: process.env.AWS_REGION || "",
+                credentials: {
+                    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+                    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || ""
+                }
+            };
+            const getObjectParams = { Bucket: process.env.AWS_BUCKET_NAME || "", Key: req.params.filename };
+            const client = new client_s3_1.S3Client(clientParams);
+            let command = null;
+            if (req.params.method === "put") {
+                command = new client_s3_1.PutObjectCommand(getObjectParams);
+            }
+            else {
+                command = new client_s3_1.GetObjectCommand(getObjectParams);
+            }
+            const url = yield (0, s3_request_presigner_1.getSignedUrl)(client, command, { expiresIn: 3600 });
+            res.status(200).json({ url });
+        }
+        catch (error) {
+            res.status(500).json({ error: "Error when when getting signed URL" });
+        }
     })
 };
 exports.default = controller;

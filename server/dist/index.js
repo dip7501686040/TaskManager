@@ -8,15 +8,13 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cors_1 = __importDefault(require("cors"));
 const task_routes_1 = __importDefault(require("./routes/task.routes"));
-const dotenv_1 = __importDefault(require("dotenv"));
 // Create an Express app
 const app = (0, express_1.default)();
 const port = process.env.PORT || 8000;
-const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://dip7501686040:ASDasd278@cluster0.alyonrh.mongodb.net/TaskManager?retryWrites=true&w=majority&appName=Cluster0";
+const MONGO_URI = process.env.MONGO_URI || "";
 // middlewares
-dotenv_1.default.config();
 app.use(body_parser_1.default.json());
-app.use(body_parser_1.default.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }))
 app.use((0, cors_1.default)());
 // Connect to MongoDB
 const clientOptions = { serverApi: { version: "1", strict: true, deprecationErrors: true } };
