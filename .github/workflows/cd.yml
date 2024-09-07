@@ -37,7 +37,6 @@ jobs:
           server/.dockerignore --skip-checks
           server/dist
           server/package.json --skip-checks
-          server/env-cmdrc --skip-checks
           docker-compose.yml --skip-checks
     - name: Docker compose up
       run: |
