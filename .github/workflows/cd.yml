@@ -18,11 +18,6 @@ jobs:
       run: |
         sudo docker compose down
         sudo docker image prune -a
-    # Make cmdrc file
-    - name: Make env-cmdrc file
-      working-directory: ./server
-      run: |
-          echo '{ "production": { "ENV": "production", "MONGO_URI": "${{ secrets.MONGO_URI_PROD }}", "API_URL": "${{ secrets.API_URL_PROD }}", "AWS_ACCESS_KEY_ID": "${{ secrets.AWS_ACCESS_KEY_ID_PROD }}", "AWS_SECRET_ACCESS_KEY": "${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}", "AWS_REGION": "${{ secrets.AWS_REGION_PROD }}", "AWS_BUCKET_NAME": "${{ secrets.AWS_BUCKET_NAME_PROD }}" } }' > env-cmdrc
     # Checkout the code from the GitHub repository
     - name: Checkout code
       uses: actions/checkout@v4
@@ -38,6 +33,11 @@ jobs:
           server/dist
           server/package.json --skip-checks
           docker-compose.yml --skip-checks
+    # Make cmdrc file
+    - name: Make env-cmdrc file
+      working-directory: ./server
+      run: |
+          echo '{ "production": { "ENV": "production", "MONGO_URI": "${{ secrets.MONGO_URI_PROD }}", "API_URL": "${{ secrets.API_URL_PROD }}", "AWS_ACCESS_KEY_ID": "${{ secrets.AWS_ACCESS_KEY_ID_PROD }}", "AWS_SECRET_ACCESS_KEY": "${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}", "AWS_REGION": "${{ secrets.AWS_REGION_PROD }}", "AWS_BUCKET_NAME": "${{ secrets.AWS_BUCKET_NAME_PROD }}" } }' > .env-cmdrc
     - name: Docker compose up
       run: |
         sudo docker compose up -d
