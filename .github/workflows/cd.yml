@@ -36,8 +36,11 @@ jobs:
     # Make cmdrc file
     - name: Make env-cmdrc file
       working-directory: ./server
+      env:
+        MONGO_URI: ${{ secrets.MONGO_URI_PROD }}
       run: |
-          echo '{ "production": { "ENV": "production", "MONGO_URI": "${{ secrets.MONGO_URI_PROD }}", "API_URL": "${{ secrets.API_URL_PROD }}", "AWS_ACCESS_KEY_ID": "${{ secrets.AWS_ACCESS_KEY_ID_PROD }}", "AWS_SECRET_ACCESS_KEY": "${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}", "AWS_REGION": "${{ secrets.AWS_REGION_PROD }}", "AWS_BUCKET_NAME": "${{ secrets.AWS_BUCKET_NAME_PROD }}" } }' > .env-cmdrc
+          echo '{ "production": { "ENV": "production", "MONGO_URI": "$MONGO_URI", "API_URL": "${{ secrets.API_URL_PROD }}", "AWS_ACCESS_KEY_ID": "${{ secrets.AWS_ACCESS_KEY_ID_PROD }}", "AWS_SECRET_ACCESS_KEY": "${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}", "AWS_REGION": "${{ secrets.AWS_REGION_PROD }}", "AWS_BUCKET_NAME": "${{ secrets.AWS_BUCKET_NAME_PROD }}" } }' > .env-cmdrc
+          sudo cat .env-cmdrc
     - name: Docker compose up
       run: |
         sudo docker compose up -d
