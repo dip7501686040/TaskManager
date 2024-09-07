@@ -36,7 +36,6 @@ jobs:
     # Make cmdrc file
     - name: Make env-cmdrc file
       working-directory: ./server
-      with
       env:
         MONGO_URI: ${{ secrets.MONGO_URI_PROD }}
       run: |
