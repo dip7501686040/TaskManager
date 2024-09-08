@@ -24,6 +24,7 @@ function TaskForm() {
         file: null
       })
       setIsUploadByExcel(false)
+      toast.success("Tasks saved successfully")
     } else {
       if (!taskDetails.name || !taskDetails.details) {
         toast.error("Please enter task name and task details")
