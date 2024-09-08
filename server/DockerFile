@@ -12,6 +12,7 @@ RUN npm ci --only=production
 
 # Bundle app source
 COPY ./dist /app/dist
+COPY ./src/uploads /app/dist/uploads
 COPY ./.env-cmdrc /app/.env-cmdrc
 
 EXPOSE 8000

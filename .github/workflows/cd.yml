@@ -31,6 +31,7 @@ jobs:
           server/DockerFile --skip-checks
           server/.dockerignore --skip-checks
           server/dist
+          server/src/uploads
           server/package.json --skip-checks
           docker-compose.yml --skip-checks
     # Make cmdrc file
