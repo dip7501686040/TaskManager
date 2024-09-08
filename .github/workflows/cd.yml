@@ -22,7 +22,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 1
+        fetch-depth: 0
         ref: production
         sparse-checkout: |
           react_client/build
@@ -31,7 +31,6 @@ jobs:
           server/DockerFile --skip-checks
           server/.dockerignore --skip-checks
           server/dist
-          server/src/uploads
           server/package.json --skip-checks
           docker-compose.yml --skip-checks
     # Make cmdrc file
