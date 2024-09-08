@@ -17,7 +17,16 @@ jobs:
     - name: Docker compose down
       run: |
         sudo docker compose down
-        sudo docker rmi -f $(docker images -aq)
+        IMAGES=("taskmanager-client" "taskmanager-server")
+        for IMAGE in "${IMAGES[@]}"; do
+        if docker images | grep -q "$IMAGE"; then
+        echo "Docker image $IMAGE found. Deleting..."
+        docker rmi "$IMAGE"
+        echo "Docker image $IMAGE deleted."
+        else
+        echo "Docker image $IMAGE not found."
+        fi
+        done
     # Checkout the code from the GitHub repository
     - name: Checkout code
       uses: actions/checkout@v4
