@@ -43,6 +43,8 @@ jobs:
         npm ci
         npm run build
     - name: Commit Build
+      with:
+        ssh-key: ${{secrets.DEPLOY_KEY_PROD}}
       run: |
         git config --global user.name "dip7501686040"
         git config --global user.email "dip7501686040@gmail.com"
